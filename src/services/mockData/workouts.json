@@ -1,0 +1,150 @@
+[
+  {
+    "id": "1",
+    "name": "Upper Body Blast",
+    "exercises": [
+      {
+        "id": "1",
+        "name": "Push-ups",
+        "sets": 3,
+        "reps": 12,
+        "weight": 0,
+        "restTime": 60,
+        "completed": false
+      },
+      {
+        "id": "2",
+        "name": "Pull-ups",
+        "sets": 3,
+        "reps": 8,
+        "weight": 0,
+        "restTime": 90,
+        "completed": false
+      },
+      {
+        "id": "3",
+        "name": "Bench Press",
+        "sets": 4,
+        "reps": 10,
+        "weight": 135,
+        "restTime": 120,
+        "completed": false
+      }
+    ],
+    "duration": 45,
+    "difficulty": "Medium",
+    "targetMuscles": ["Chest", "Shoulders", "Triceps"],
+    "caloriesBurned": 320,
+    "category": "strength",
+    "description": "Complete upper body workout targeting chest, shoulders, and arms"
+  },
+  {
+    "id": "2",
+    "name": "HIIT Cardio Blast",
+    "exercises": [
+      {
+        "id": "4",
+        "name": "Burpees",
+        "sets": 4,
+        "reps": 15,
+        "weight": 0,
+        "restTime": 30,
+        "completed": false
+      },
+      {
+        "id": "5",
+        "name": "Mountain Climbers",
+        "sets": 4,
+        "reps": 20,
+        "weight": 0,
+        "restTime": 30,
+        "completed": false
+      },
+      {
+        "id": "6",
+        "name": "Jump Squats",
+        "sets": 4,
+        "reps": 12,
+        "weight": 0,
+        "restTime": 45,
+        "completed": false
+      }
+    ],
+    "duration": 30,
+    "difficulty": "Hard",
+    "targetMuscles": ["Full Body"],
+    "caloriesBurned": 450,
+    "category": "hiit",
+    "description": "High-intensity interval training for maximum calorie burn"
+  },
+  {
+    "id": "3",
+    "name": "Lower Body Power",
+    "exercises": [
+      {
+        "id": "7",
+        "name": "Squats",
+        "sets": 4,
+        "reps": 15,
+        "weight": 95,
+        "restTime": 90,
+        "completed": false
+      },
+      {
+        "id": "8",
+        "name": "Deadlifts",
+        "sets": 4,
+        "reps": 8,
+        "weight": 155,
+        "restTime": 120,
+        "completed": false
+      },
+      {
+        "id": "9",
+        "name": "Lunges",
+        "sets": 3,
+        "reps": 12,
+        "weight": 25,
+        "restTime": 60,
+        "completed": false
+      }
+    ],
+    "duration": 50,
+    "difficulty": "Hard",
+    "targetMuscles": ["Quads", "Glutes", "Hamstrings"],
+    "caloriesBurned": 380,
+    "category": "strength",
+    "description": "Comprehensive lower body strength training session"
+  },
+  {
+    "id": "4",
+    "name": "Core & Flexibility",
+    "exercises": [
+      {
+        "id": "10",
+        "name": "Plank",
+        "sets": 3,
+        "reps": 1,
+        "weight": 0,
+        "restTime": 60,
+        "completed": false,
+        "duration": 60
+      },
+      {
+        "id": "11",
+        "name": "Russian Twists",
+        "sets": 3,
+        "reps": 20,
+        "weight": 15,
+        "restTime": 45,
+        "completed": false
+      }
+    ],
+    "duration": 25,
+    "difficulty": "Easy",
+    "targetMuscles": ["Core", "Abs"],
+    "caloriesBurned": 150,
+    "category": "flexibility",
+    "description": "Focus on core strength and flexibility"
+  }
+]

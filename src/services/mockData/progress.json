@@ -1,0 +1,66 @@
+[
+  {
+    "id": "1",
+    "date": "2024-01-20T08:00:00Z",
+    "weight": 172,
+    "measurements": {
+      "chest": 42,
+      "waist": 32,
+      "hips": 38,
+      "biceps": 14,
+      "thighs": 24
+    },
+    "workoutsCompleted": 4,
+    "caloriesConsumed": 2150,
+    "caloriesBurned": 520,
+    "notes": "Feeling strong this week, increased weights on most exercises"
+  },
+  {
+    "id": "2",
+    "date": "2024-01-13T08:00:00Z",
+    "weight": 174,
+    "measurements": {
+      "chest": 41.5,
+      "waist": 32.5,
+      "hips": 38.5,
+      "biceps": 13.8,
+      "thighs": 24.2
+    },
+    "workoutsCompleted": 3,
+    "caloriesConsumed": 2200,
+    "caloriesBurned": 450,
+    "notes": "Good week overall, missed one workout due to schedule"
+  },
+  {
+    "id": "3",
+    "date": "2024-01-06T08:00:00Z",
+    "weight": 176,
+    "measurements": {
+      "chest": 41,
+      "waist": 33,
+      "hips": 39,
+      "biceps": 13.5,
+      "thighs": 24.5
+    },
+    "workoutsCompleted": 3,
+    "caloriesConsumed": 2300,
+    "caloriesBurned": 380,
+    "notes": "Starting to see progress, need to focus more on diet consistency"
+  },
+  {
+    "id": "4",
+    "date": "2023-12-30T08:00:00Z",
+    "weight": 178,
+    "measurements": {
+      "chest": 40.5,
+      "waist": 33.5,
+      "hips": 39.5,
+      "biceps": 13.2,
+      "thighs": 25
+    },
+    "workoutsCompleted": 2,
+    "caloriesConsumed": 2400,
+    "caloriesBurned": 320,
+    "notes": "Holiday week, but managed to stay somewhat on track"
+  }
+]

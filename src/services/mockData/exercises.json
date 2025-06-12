@@ -1,0 +1,67 @@
+[
+  {
+    "id": "1",
+    "name": "Push-ups",
+    "sets": 3,
+    "reps": 12,
+    "weight": 0,
+    "restTime": 60,
+    "completed": false,
+    "category": "bodyweight",
+    "targetMuscles": ["Chest", "Triceps", "Shoulders"],
+    "equipment": "None",
+    "instructions": "Start in a plank position, lower your body until your chest nearly touches the floor, then push back up."
+  },
+  {
+    "id": "2",
+    "name": "Pull-ups",
+    "sets": 3,
+    "reps": 8,
+    "weight": 0,
+    "restTime": 90,
+    "completed": false,
+    "category": "bodyweight",
+    "targetMuscles": ["Back", "Biceps"],
+    "equipment": "Pull-up bar",
+    "instructions": "Hang from a bar with arms extended, pull your body up until your chin is over the bar."
+  },
+  {
+    "id": "3",
+    "name": "Bench Press",
+    "sets": 4,
+    "reps": 10,
+    "weight": 135,
+    "restTime": 120,
+    "completed": false,
+    "category": "strength",
+    "targetMuscles": ["Chest", "Triceps", "Shoulders"],
+    "equipment": "Barbell, Bench",
+    "instructions": "Lie on bench, lower barbell to chest, press up until arms are fully extended."
+  },
+  {
+    "id": "4",
+    "name": "Squats",
+    "sets": 4,
+    "reps": 15,
+    "weight": 95,
+    "restTime": 90,
+    "completed": false,
+    "category": "strength",
+    "targetMuscles": ["Quads", "Glutes", "Hamstrings"],
+    "equipment": "Barbell",
+    "instructions": "Stand with feet shoulder-width apart, lower body by bending knees, return to standing."
+  },
+  {
+    "id": "5",
+    "name": "Burpees",
+    "sets": 4,
+    "reps": 15,
+    "weight": 0,
+    "restTime": 30,
+    "completed": false,
+    "category": "cardio",
+    "targetMuscles": ["Full Body"],
+    "equipment": "None",
+    "instructions": "Start standing, drop to squat, jump back to plank, do push-up, jump feet to squat, jump up with arms overhead."
+  }
+]

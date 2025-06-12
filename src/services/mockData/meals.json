@@ -1,0 +1,72 @@
+[
+  {
+    "id": "1",
+    "name": "Grilled Chicken & Quinoa Bowl",
+    "calories": 485,
+    "protein": 35,
+    "carbs": 42,
+    "fats": 18,
+    "ingredients": ["Chicken breast", "Quinoa", "Broccoli", "Bell peppers", "Olive oil", "Garlic"],
+    "prepTime": 25,
+    "type": "lunch",
+    "consumed": false,
+    "servings": 1,
+    "instructions": "Grill seasoned chicken breast, prepare quinoa, steam vegetables, combine with olive oil dressing."
+  },
+  {
+    "id": "2",
+    "name": "Overnight Oats with Berries",
+    "calories": 320,
+    "protein": 12,
+    "carbs": 58,
+    "fats": 8,
+    "ingredients": ["Rolled oats", "Greek yogurt", "Blueberries", "Strawberries", "Honey", "Chia seeds"],
+    "prepTime": 5,
+    "type": "breakfast",
+    "consumed": false,
+    "servings": 1,
+    "instructions": "Mix oats with yogurt and honey, add chia seeds, top with berries, refrigerate overnight."
+  },
+  {
+    "id": "3",
+    "name": "Salmon & Sweet Potato",
+    "calories": 520,
+    "protein": 38,
+    "carbs": 35,
+    "fats": 24,
+    "ingredients": ["Salmon fillet", "Sweet potato", "Asparagus", "Lemon", "Herbs", "Olive oil"],
+    "prepTime": 30,
+    "type": "dinner",
+    "consumed": false,
+    "servings": 1,
+    "instructions": "Bake seasoned salmon with herbs, roast sweet potato chunks, steam asparagus, serve with lemon."
+  },
+  {
+    "id": "4",
+    "name": "Protein Smoothie Bowl",
+    "calories": 280,
+    "protein": 25,
+    "carbs": 32,
+    "fats": 9,
+    "ingredients": ["Protein powder", "Banana", "Spinach", "Almond milk", "Granola", "Coconut flakes"],
+    "prepTime": 10,
+    "type": "snack",
+    "consumed": false,
+    "servings": 1,
+    "instructions": "Blend protein powder with banana, spinach, and almond milk, top with granola and coconut."
+  },
+  {
+    "id": "5",
+    "name": "Turkey & Avocado Wrap",
+    "calories": 415,
+    "protein": 28,
+    "carbs": 35,
+    "fats": 19,
+    "ingredients": ["Whole wheat tortilla", "Turkey breast", "Avocado", "Lettuce", "Tomato", "Hummus"],
+    "prepTime": 10,
+    "type": "lunch",
+    "consumed": false,
+    "servings": 1,
+    "instructions": "Spread hummus on tortilla, add turkey, avocado slices, lettuce, and tomato, wrap tightly."
+  }
+]

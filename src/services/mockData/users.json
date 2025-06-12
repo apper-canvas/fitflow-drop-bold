@@ -1,0 +1,18 @@
+[
+  {
+    "id": "1",
+    "name": "Alex Johnson",
+    "email": "alex.johnson@example.com",
+    "goals": ["Weight Loss", "Muscle Gain", "Endurance"],
+    "fitnessLevel": "intermediate",
+    "height": 70,
+    "targetWeight": 165,
+    "dietaryRestrictions": ["Vegetarian"],
+    "createdAt": "2024-01-15T08:00:00Z",
+    "preferences": {
+      "units": "imperial",
+      "workoutDays": ["Monday", "Wednesday", "Friday", "Saturday"],
+      "preferredWorkoutTime": "morning"
+    }
+  }
+]
