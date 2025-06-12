@@ -1,31 +1,52 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
-import ApperIcon from './ApperIcon';
-import workoutService from '../services/api/workoutService';
-import exerciseService from '../services/api/exerciseService';
+import ApperIcon from '@/components/ApperIcon';
+import Button from '@/components/atoms/Button';
+import Text from '@/components/atoms/Text';
+import InfoCard from '@/components/molecules/InfoCard';
+import ProgressBar from '@/components/molecules/ProgressBar';
+import FeedbackCard from '@/components/molecules/FeedbackCard';
+import SkeletonLoader from '@/components/molecules/SkeletonLoader';
+import workoutService from '@/services/api/workoutService';
 
-const MainFeature = () => {
+const ActiveWorkoutFeature = () => {
   const [activeWorkout, setActiveWorkout] = useState(null);
-  const [currentExercise, setCurrentExercise] = useState(0);
-  const [timer, setTimer] = useState(0);
+  const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
+  const [workoutTimer, setWorkoutTimer] = useState(0);
   const [isResting, setIsResting] = useState(false);
   const [restTimer, setRestTimer] = useState(0);
   const [completedSets, setCompletedSets] = useState({});
   const [loading, setLoading] = useState(false);
+  const [quickStartWorkouts, setQuickStartWorkouts] = useState([]);
 
-  // Timer effect for workout
+  useEffect(() => {
+    const fetchQuickStartWorkouts = async () => {
+      setLoading(true);
+      try {
+        const allWorkouts = await workoutService.getAll();
+        // Take first 3 workouts for quick start
+        setQuickStartWorkouts(allWorkouts.slice(0, 3));
+      } catch (err) {
+        toast.error('Failed to load quick start workouts.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchQuickStartWorkouts();
+  }, []);
+
+  // Workout Timer effect
   useEffect(() => {
     let interval;
     if (activeWorkout && !isResting) {
       interval = setInterval(() => {
-        setTimer(prev => prev + 1);
+        setWorkoutTimer(prev => prev + 1);
       }, 1000);
     }
     return () => clearInterval(interval);
   }, [activeWorkout, isResting]);
 
-  // Rest timer effect
+  // Rest Timer effect
   useEffect(() => {
     let interval;
     if (isResting && restTimer > 0) {
@@ -48,8 +69,8 @@ const MainFeature = () => {
     try {
       const workout = await workoutService.getById(workoutId);
       setActiveWorkout(workout);
-      setCurrentExercise(0);
-      setTimer(0);
+      setCurrentExerciseIndex(0);
+      setWorkoutTimer(0);
       setCompletedSets({});
       toast.success(`Started ${workout.name}!`);
     } catch (error) {
@@ -78,9 +99,10 @@ const MainFeature = () => {
   };
 
   const nextExercise = () => {
-    if (currentExercise < activeWorkout.exercises.length - 1) {
-      setCurrentExercise(prev => prev + 1);
+    if (activeWorkout && currentExerciseIndex < activeWorkout.exercises.length - 1) {
+      setCurrentExerciseIndex(prev => prev + 1);
       toast.info('Moving to next exercise');
+      setIsResting(false); // End rest if any
     } else {
       finishWorkout();
     }
@@ -88,14 +110,14 @@ const MainFeature = () => {
 
   const finishWorkout = async () => {
     try {
-      // Log workout completion
+      if (!activeWorkout) return;
       const completedWorkout = {
         ...activeWorkout,
         completedAt: new Date().toISOString(),
-        duration: timer,
+        duration: workoutTimer,
         exercises: activeWorkout.exercises.map(exercise => ({
           ...exercise,
-          completed: true
+          completed: true // Mark all as completed for simplicity
         }))
       };
       
@@ -103,12 +125,22 @@ const MainFeature = () => {
       
       toast.success('🎉 Workout completed! Great job!');
       setActiveWorkout(null);
-      setCurrentExercise(0);
-      setTimer(0);
+      setCurrentExerciseIndex(0);
+      setWorkoutTimer(0);
       setCompletedSets({});
     } catch (error) {
       toast.error('Failed to save workout');
     }
+  };
+
+  const stopWorkout = () => {
+    setActiveWorkout(null);
+    setCurrentExerciseIndex(0);
+    setWorkoutTimer(0);
+    setCompletedSets({});
+    setIsResting(false);
+    setRestTimer(0);
+    toast.info('Workout stopped');
   };
 
   const formatTime = (seconds) => {
@@ -120,11 +152,11 @@ const MainFeature = () => {
   if (loading) {
     return (
       <div className="p-6">
-        <div className="animate-pulse space-y-4">
+        <SkeletonLoader>
           <div className="h-8 bg-surface rounded w-3/4"></div>
           <div className="h-20 bg-surface rounded"></div>
           <div className="h-20 bg-surface rounded"></div>
-        </div>
+        </SkeletonLoader>
       </div>
     );
   }
@@ -132,61 +164,27 @@ const MainFeature = () => {
   if (!activeWorkout) {
     return (
       <div className="p-6">
-        <h2 className="text-display-sm font-display text-white mb-6">
+        <Text as="h2" className="text-display-sm font-display text-white mb-6">
           Quick Start Workout
-        </h2>
+        </Text>
         
         <div className="grid gap-4">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => startWorkout('1')}
-            className="gradient-primary p-6 rounded-xl text-left"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-heading text-lg text-white">Upper Body Blast</h3>
-                <p className="text-white/80 text-sm">45 min • 8 exercises</p>
-              </div>
-              <ApperIcon name="Play" size={24} className="text-white" />
-            </div>
-          </motion.button>
-
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => startWorkout('2')}
-            className="gradient-accent p-6 rounded-xl text-left"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-heading text-lg text-white">HIIT Cardio</h3>
-                <p className="text-white/80 text-sm">30 min • 6 exercises</p>
-              </div>
-              <ApperIcon name="Play" size={24} className="text-white" />
-            </div>
-          </motion.button>
-
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => startWorkout('3')}
-            className="gradient-success p-6 rounded-xl text-left"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-heading text-lg text-white">Lower Body Power</h3>
-                <p className="text-white/80 text-sm">50 min • 10 exercises</p>
-              </div>
-              <ApperIcon name="Play" size={24} className="text-white" />
-            </div>
-          </motion.button>
+          {quickStartWorkouts.map((workout, index) => (
+            <InfoCard
+              key={workout.id}
+              className={`gradient-${index % 3 === 0 ? 'primary' : index % 3 === 1 ? 'accent' : 'success'}`}
+              title={workout.name}
+              description={`${workout.duration} min • ${workout.exercises?.length || 0} exercises`}
+              iconName="Play"
+              onClick={() => startWorkout(workout.id)}
+            />
+          ))}
         </div>
       </div>
     );
   }
 
-  const exercise = activeWorkout.exercises[currentExercise];
+  const exercise = activeWorkout.exercises[currentExerciseIndex];
 
   return (
     <div className="p-6">
@@ -194,73 +192,67 @@ const MainFeature = () => {
       <div className="bg-surface rounded-xl p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-display-sm font-display text-white">
+            <Text as="h2" className="text-display-sm font-display text-white">
               {activeWorkout.name}
-            </h2>
-            <p className="text-surface400">
-              Exercise {currentExercise + 1} of {activeWorkout.exercises.length}
-            </p>
+            </Text>
+            <Text className="text-surface400">
+              Exercise {currentExerciseIndex + 1} of {activeWorkout.exercises.length}
+            </Text>
           </div>
           <div className="text-right">
-            <div className="text-2xl font-bold text-primary">
-              {formatTime(timer)}
-            </div>
-            <p className="text-surface400 text-sm">Total Time</p>
+            <Text as="div" className="text-2xl font-bold text-primary">
+              {formatTime(workoutTimer)}
+            </Text>
+            <Text className="text-surface400 text-sm">Total Time</Text>
           </div>
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full bg-surface600 rounded-full h-2">
-          <motion.div
-            className="gradient-primary h-2 rounded-full"
-            initial={{ width: 0 }}
-            animate={{ 
-              width: `${((currentExercise + 1) / activeWorkout.exercises.length) * 100}%` 
-            }}
-            transition={{ duration: 0.5 }}
-          />
-        </div>
+        <ProgressBar
+          label="Workout Progress"
+          currentValue={currentExerciseIndex + 1}
+          targetValue={activeWorkout.exercises.length}
+          unit=""
+          barColorClass="gradient-primary"
+          animationDelay={0} // No delay for workout progress bar
+        />
       </div>
 
       {/* Rest Timer */}
       {isResting && (
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="bg-warning rounded-xl p-6 mb-6 text-center"
-        >
-          <ApperIcon name="Timer" size={32} className="mx-auto mb-2 text-white" />
-          <div className="text-3xl font-bold text-white mb-2">
-            {formatTime(restTimer)}
-          </div>
-          <p className="text-white/80">Rest Time</p>
-        </motion.div>
+        <FeedbackCard
+          type="info"
+          title={formatTime(restTimer)}
+          message="Rest Time"
+          iconName="Timer"
+          className="bg-warning rounded-xl text-center"
+        />
       )}
 
       {/* Current Exercise */}
       <div className="bg-surface rounded-xl p-6 mb-6">
-        <h3 className="text-xl font-heading text-white mb-4">
+        <Text as="h3" className="text-xl font-heading text-white mb-4">
           {exercise.name}
-        </h3>
+        </Text>
         
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="text-center">
-            <div className="text-2xl font-bold text-primary">
+            <Text as="div" className="text-2xl font-bold text-primary">
               {exercise.sets}
-            </div>
-            <p className="text-surface400 text-sm">Sets</p>
+            </Text>
+            <Text className="text-surface400 text-sm">Sets</Text>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-secondary">
+            <Text as="div" className="text-2xl font-bold text-secondary">
               {exercise.reps}
-            </div>
-            <p className="text-surface400 text-sm">Reps</p>
+            </Text>
+            <Text className="text-surface400 text-sm">Reps</Text>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-accent">
+            <Text as="div" className="text-2xl font-bold text-accent">
               {exercise.weight}
-            </div>
-            <p className="text-surface400 text-sm">Weight</p>
+            </Text>
+            <Text className="text-surface400 text-sm">Weight</Text>
           </div>
         </div>
 
@@ -271,10 +263,8 @@ const MainFeature = () => {
             const isCompleted = completedSets[key];
             
             return (
-              <motion.button
+              <Button
                 key={index}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
                 onClick={() => completeSet(exercise.id, index)}
                 className={`p-3 rounded-lg border-2 transition-all ${
                   isCompleted
@@ -282,11 +272,11 @@ const MainFeature = () => {
                     : 'border-surface600 text-surface400 hover:border-primary'
                 }`}
               >
-                <div className="font-bold">Set {index + 1}</div>
+                <Text as="div" className="font-bold">Set {index + 1}</Text>
                 {isCompleted && (
                   <ApperIcon name="Check" size={16} className="mx-auto mt-1" />
                 )}
-              </motion.button>
+              </Button>
             );
           })}
         </div>
@@ -294,44 +284,32 @@ const MainFeature = () => {
 
       {/* Action Buttons */}
       <div className="grid grid-cols-2 gap-4">
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+        <Button
           onClick={() => startRest(exercise.restTime)}
           className="bg-surface600 text-white p-4 rounded-xl font-medium flex items-center justify-center gap-2"
         >
           <ApperIcon name="Timer" size={20} />
           Rest ({exercise.restTime}s)
-        </motion.button>
+        </Button>
 
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+        <Button
           onClick={nextExercise}
           className="gradient-primary text-white p-4 rounded-xl font-medium flex items-center justify-center gap-2"
         >
           <ApperIcon name="ArrowRight" size={20} />
-          {currentExercise < activeWorkout.exercises.length - 1 ? 'Next' : 'Finish'}
-        </motion.button>
+          {currentExerciseIndex < activeWorkout.exercises.length - 1 ? 'Next' : 'Finish'}
+        </Button>
       </div>
 
       {/* Emergency Stop */}
-      <motion.button
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        onClick={() => {
-          setActiveWorkout(null);
-          setCurrentExercise(0);
-          setTimer(0);
-          setCompletedSets({});
-          toast.info('Workout stopped');
-        }}
+      <Button
+        onClick={stopWorkout}
         className="w-full mt-4 bg-error/20 border border-error text-error p-3 rounded-xl font-medium"
       >
         Stop Workout
-      </motion.button>
+      </Button>
     </div>
   );
 };
 
-export default MainFeature;
+export default ActiveWorkoutFeature;
