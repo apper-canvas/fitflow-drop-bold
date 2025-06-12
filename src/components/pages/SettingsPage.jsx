@@ -44,14 +44,14 @@ const SettingsPage = () => {
         const users = await userService.getAll();
         const userData = users[0] || null;
         
-        if (userData) {
+if (userData) {
           setUser(userData);
           setFormData({
-            name: userData.name || '',
+            name: userData.Name || '',
             email: userData.email || '',
             height: userData.height || '',
-            targetWeight: userData.targetWeight || '',
-            fitnessLevel: userData.fitnessLevel || 'beginner'
+            targetWeight: userData.target_weight || '',
+            fitnessLevel: userData.fitness_level || 'beginner'
           });
         }
       } catch (err) {
@@ -68,15 +68,23 @@ const SettingsPage = () => {
   const handleProfileSave = async () => {
     try {
       let updatedUser;
-      
-      if (user) {
-        updatedUser = await userService.update(user.id, { ...user, ...formData });
+if (user) {
+        updatedUser = await userService.update(user.Id, { 
+          Name: formData.name,
+          email: formData.email,
+          height: formData.height,
+          target_weight: formData.targetWeight,
+          fitness_level: formData.fitnessLevel
+        });
       } else {
         updatedUser = await userService.create({
-          id: Date.now().toString(),
-          ...formData,
-          goals: ['Weight Loss', 'Muscle Gain'],
-          dietaryRestrictions: []
+          Name: formData.name,
+          email: formData.email,
+          height: formData.height,
+          target_weight: formData.targetWeight,
+          fitness_level: formData.fitnessLevel,
+          goals: 'Weight Loss,Muscle Gain',
+          dietary_restrictions: ''
         });
       }
       

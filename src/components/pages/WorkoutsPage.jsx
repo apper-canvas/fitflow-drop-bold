@@ -86,11 +86,11 @@ const WorkoutsPage = () => {
     };
   }, []);
 
-  const filteredWorkouts = selectedCategory === 'all' 
+const filteredWorkouts = selectedCategory === 'all' 
     ? workouts 
     : workouts.filter(workout => 
         workout.category?.toLowerCase() === selectedCategory ||
-        workout.name.toLowerCase().includes(selectedCategory)
+        workout.Name?.toLowerCase().includes(selectedCategory)
       );
 
   if (loading) {

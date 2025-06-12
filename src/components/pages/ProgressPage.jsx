@@ -40,7 +40,7 @@ const ProgressPage = () => {
     };
 
     loadProgress();
-  }, []);
+}, []);
 
   const handleLogWeight = async () => {
     if (!newWeight || isNaN(parseFloat(newWeight))) {
@@ -50,17 +50,16 @@ const ProgressPage = () => {
 
     try {
       const newEntry = {
-        id: Date.now().toString(),
+        Name: `Weight Entry ${new Date().toLocaleDateString()}`,
         date: new Date().toISOString(),
         weight: parseFloat(newWeight),
-        workoutsCompleted: 0,
-        caloriesBurned: 0,
-        caloriesConsumed: 0,
-        measurements: {}
+        workouts_completed: 0,
+        calories_burned: 0,
+        calories_consumed: 0
       };
 
-      await progressService.create(newEntry);
-      setProgressData(prev => [newEntry, ...prev]);
+      const createdEntry = await progressService.create(newEntry);
+      setProgressData(prev => [createdEntry, ...prev]);
       setNewWeight('');
       toast.success('Weight logged successfully!');
     } catch (error) {
@@ -76,9 +75,9 @@ const ProgressPage = () => {
       case 'weight':
         return latest.weight || 0;
       case 'workouts':
-        return latest.workoutsCompleted || 0;
+        return latest.workouts_completed || 0;
       case 'calories':
-        return latest.caloriesBurned || 0;
+        return latest.calories_burned || 0;
       default:
         return 0;
     }
@@ -96,12 +95,12 @@ const ProgressPage = () => {
         previousVal = previous.weight || 0;
         break;
       case 'workouts':
-        currentVal = current.workoutsCompleted || 0;
-        previousVal = previous.workoutsCompleted || 0;
+        currentVal = current.workouts_completed || 0;
+        previousVal = previous.workouts_completed || 0;
         break;
       case 'calories':
-        currentVal = current.caloriesBurned || 0;
-        previousVal = previous.caloriesBurned || 0;
+        currentVal = current.calories_burned || 0;
+        previousVal = previous.calories_burned || 0;
         break;
     }
     

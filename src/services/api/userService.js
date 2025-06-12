@@ -1,62 +1,184 @@
-import userData from '../mockData/users.json';
-
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 class UserService {
   constructor() {
-    this.users = [...userData];
+    this.tableName = 'User1';
+    this.updateableFields = [
+      'Name', 'Tags', 'Owner', 'email', 'goals', 'fitness_level', 'height', 
+      'target_weight', 'dietary_restrictions', 'units', 'workout_days', 
+      'preferred_workout_time'
+    ];
+  }
+
+  getApperClient() {
+    const { ApperClient } = window.ApperSDK;
+    return new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    });
   }
 
   async getAll() {
     await delay(300);
-    return [...this.users];
+    try {
+      const client = this.getApperClient();
+      const params = {
+        fields: [
+          'Id', 'Name', 'Tags', 'Owner', 'CreatedOn', 'CreatedBy', 
+          'ModifiedOn', 'ModifiedBy', 'email', 'goals', 'fitness_level', 'height', 
+          'target_weight', 'dietary_restrictions', 'units', 'workout_days', 
+          'preferred_workout_time'
+        ]
+      };
+      
+      const response = await client.fetchRecords(this.tableName, params);
+      
+      if (!response.success) {
+        throw new Error(response.message);
+      }
+      
+      return response.data || [];
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      throw error;
+    }
   }
 
   async getById(id) {
     await delay(200);
-    const user = this.users.find(u => u.id === id);
-    if (!user) {
-      throw new Error('User not found');
+    try {
+      const client = this.getApperClient();
+      const params = {
+        fields: [
+          'Id', 'Name', 'Tags', 'Owner', 'CreatedOn', 'CreatedBy', 
+          'ModifiedOn', 'ModifiedBy', 'email', 'goals', 'fitness_level', 'height', 
+          'target_weight', 'dietary_restrictions', 'units', 'workout_days', 
+          'preferred_workout_time'
+        ]
+      };
+      
+      const response = await client.getRecordById(this.tableName, id, params);
+      
+      if (!response.success) {
+        throw new Error(response.message);
+      }
+      
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching user with ID ${id}:`, error);
+      throw error;
     }
-    return { ...user };
   }
 
   async create(userData) {
     await delay(400);
-    const newUser = {
-      ...userData,
-      id: userData.id || Date.now().toString(),
-      createdAt: new Date().toISOString()
-    };
-    this.users.push(newUser);
-    return { ...newUser };
+    try {
+      const client = this.getApperClient();
+      
+      // Filter to only include updateable fields
+      const filteredData = {};
+      this.updateableFields.forEach(field => {
+        if (userData[field] !== undefined) {
+          filteredData[field] = userData[field];
+        }
+      });
+      
+      const params = {
+        records: [filteredData]
+      };
+      
+      const response = await client.createRecord(this.tableName, params);
+      
+      if (!response.success) {
+        throw new Error(response.message);
+      }
+      
+      if (response.results) {
+        const failedRecords = response.results.filter(result => !result.success);
+        if (failedRecords.length > 0) {
+          console.error(`Failed to create ${failedRecords.length} user records:${failedRecords}`);
+          throw new Error(failedRecords[0].message || 'Failed to create user');
+        }
+        
+        const successfulRecords = response.results.filter(result => result.success);
+        return successfulRecords[0]?.data || {};
+      }
+      
+      return {};
+    } catch (error) {
+      console.error('Error creating user:', error);
+      throw error;
+    }
   }
 
   async update(id, updates) {
     await delay(300);
-    const userIndex = this.users.findIndex(u => u.id === id);
-    if (userIndex === -1) {
-      throw new Error('User not found');
+    try {
+      const client = this.getApperClient();
+      
+      // Filter to only include updateable fields
+      const filteredUpdates = { Id: parseInt(id) };
+      this.updateableFields.forEach(field => {
+        if (updates[field] !== undefined) {
+          filteredUpdates[field] = updates[field];
+        }
+      });
+      
+      const params = {
+        records: [filteredUpdates]
+      };
+      
+      const response = await client.updateRecord(this.tableName, params);
+      
+      if (!response.success) {
+        throw new Error(response.message);
+      }
+      
+      if (response.results) {
+        const failedRecords = response.results.filter(result => !result.success);
+        if (failedRecords.length > 0) {
+          console.error(`Failed to update ${failedRecords.length} user records:${failedRecords}`);
+          throw new Error(failedRecords[0].message || 'Failed to update user');
+        }
+        
+        const successfulRecords = response.results.filter(result => result.success);
+        return successfulRecords[0]?.data || {};
+      }
+      
+      return {};
+    } catch (error) {
+      console.error('Error updating user:', error);
+      throw error;
     }
-    
-    this.users[userIndex] = {
-      ...this.users[userIndex],
-      ...updates,
-      updatedAt: new Date().toISOString()
-    };
-    
-    return { ...this.users[userIndex] };
   }
 
   async delete(id) {
     await delay(250);
-    const userIndex = this.users.findIndex(u => u.id === id);
-    if (userIndex === -1) {
-      throw new Error('User not found');
+    try {
+      const client = this.getApperClient();
+      const params = {
+        RecordIds: [parseInt(id)]
+      };
+      
+      const response = await client.deleteRecord(this.tableName, params);
+      
+      if (!response.success) {
+        throw new Error(response.message);
+      }
+      
+      if (response.results) {
+        const failedRecords = response.results.filter(result => !result.success);
+        if (failedRecords.length > 0) {
+          console.error(`Failed to delete ${failedRecords.length} user records:${failedRecords}`);
+          throw new Error(failedRecords[0].message || 'Failed to delete user');
+        }
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      throw error;
     }
-    
-    const deletedUser = this.users.splice(userIndex, 1)[0];
-    return { ...deletedUser };
   }
 }
 

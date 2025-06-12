@@ -30,9 +30,10 @@ const HomePage = () => {
           progressService.getAll()
         ]);
         
-        setTodaysWorkout(workouts[0] || null); // Assuming first is "today's" or most recent
-        setTodaysMeals(meals.slice(0, 3)); // Showing top 3 meals
-        setTodaysProgress(progress[0] || null); // Most recent progress entry
+// Get most recent data from database
+        setTodaysWorkout(workouts[0] || null);
+        setTodaysMeals(meals.slice(0, 3));
+        setTodaysProgress(progress[0] || null);
       } catch (err) {
         setError(err.message || 'Failed to load dashboard data');
         toast.error('Failed to load dashboard data');

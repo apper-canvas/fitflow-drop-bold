@@ -48,26 +48,26 @@ const MealsPage = () => {
     loadMeals();
   }, []);
 
-  const filteredMeals = selectedMealType === 'all' 
+const filteredMeals = selectedMealType === 'all' 
     ? meals 
     : meals.filter(meal => 
         meal.type?.toLowerCase() === selectedMealType ||
-        meal.name.toLowerCase().includes(selectedMealType)
+        meal.Name?.toLowerCase().includes(selectedMealType)
       );
 
-  const handleLogMeal = async (mealId) => {
+const handleLogMeal = async (mealId) => {
     try {
-      const meal = meals.find(m => m.id === mealId);
-      if (!meal) return; // Should not happen
+      const meal = meals.find(m => m.Id === mealId);
+      if (!meal) return;
 
-      const updatedMeal = { ...meal, consumed: true, consumedAt: new Date().toISOString() };
+      const updatedMeal = { consumed: true, consumed_at: new Date().toISOString() };
       
       await mealService.update(mealId, updatedMeal);
       
-      setMeals(prev => prev.map(m => m.id === mealId ? updatedMeal : m));
-      setDailyCalories(prev => prev + meal.calories);
+      setMeals(prev => prev.map(m => m.Id === mealId ? { ...m, ...updatedMeal } : m));
+      setDailyCalories(prev => prev + (meal.calories || 0));
       
-      toast.success(`Logged ${meal.name}!`);
+      toast.success(`Logged ${meal.Name}!`);
     } catch (error) {
       toast.error('Failed to log meal');
     }
