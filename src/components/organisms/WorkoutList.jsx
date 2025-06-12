@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import ApperIcon from '@/components/ApperIcon';
 import Button from '@/components/atoms/Button';
 import Text from '@/components/atoms/Text';
-
+import VideoPlayer from '@/components/atoms/VideoPlayer';
 // Mock workout service for offline/online completion
 const workoutService = {
   completeWorkout: async (workoutId, completionData) => {
@@ -88,7 +88,7 @@ const WorkoutList = ({ workouts, isOffline = false }) => {
         const isCompleting = completingWorkouts.has(workout.id);
         
         return (
-          <motion.div
+<motion.div
             key={workout.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -145,6 +145,49 @@ const WorkoutList = ({ workouts, isOffline = false }) => {
                 </span>
               ))}
             </div>
+
+            {/* Exercise Video Demonstrations */}
+            {workout.exercises && workout.exercises.length > 0 && (
+              <div className="mb-4">
+                <Text className="text-white font-medium mb-3 flex items-center gap-2">
+                  <ApperIcon name="PlayCircle" size={16} />
+                  Exercise Demonstrations
+                </Text>
+                <div className="grid gap-3">
+                  {workout.exercises.slice(0, 2).map((exercise, exerciseIndex) => (
+                    <div key={exercise.id} className="bg-surface900/50 rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <Text className="text-white text-sm font-medium">{exercise.name}</Text>
+                        <Text className="text-surface400 text-xs">
+                          {exercise.sets} sets × {exercise.reps} reps
+                        </Text>
+                      </div>
+                      <VideoPlayer
+                        videoUrl={exercise.videoUrl}
+                        exerciseName={exercise.name}
+                        techniqueTips={exercise.techniqueTips}
+                        className="w-full h-32 mb-2"
+                      />
+                      {exercise.techniqueTips && exercise.techniqueTips.length > 0 && (
+                        <div className="space-y-1">
+                          {exercise.techniqueTips.slice(0, 2).map((tip, tipIndex) => (
+                            <Text key={tipIndex} className="text-surface400 text-xs flex items-start gap-2">
+                              <span className="text-primary mt-0.5">•</span>
+                              {tip}
+                            </Text>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  {workout.exercises.length > 2 && (
+                    <Text className="text-surface400 text-xs text-center">
+                      +{workout.exercises.length - 2} more exercises with video guides
+                    </Text>
+                  )}
+                </div>
+              </div>
+            )}
 
             <div className="flex items-center justify-between">
               <Text className="text-surface400 text-sm">
