@@ -13,6 +13,7 @@ const WorkoutsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [offlineStatus, setOfflineStatus] = useState({ isOffline: false, pendingSyncItems: 0 });
 
   const categories = [
     { id: 'all', label: 'All Workouts', icon: 'Grid3X3' },
@@ -29,15 +30,60 @@ const WorkoutsPage = () => {
       try {
         const result = await workoutService.getAll();
         setWorkouts(result);
+        
+        // Update offline status
+        const status = workoutService.getOfflineStatus();
+        setOfflineStatus(status);
+        
+        if (status.isOffline && result.length > 0) {
+          toast.info('Viewing cached workouts - you\'re offline');
+        }
       } catch (err) {
         setError(err.message || 'Failed to load workouts');
-        toast.error('Failed to load workouts');
+        
+        // If offline, try to show helpful message
+        if (!navigator.onLine) {
+          setError('You\'re offline. Showing cached workouts if available.');
+          toast.warning('You\'re offline - limited functionality available');
+        } else {
+          toast.error('Failed to load workouts');
+        }
       } finally {
         setLoading(false);
       }
     };
 
     loadWorkouts();
+
+    // Listen for online/offline changes
+    const handleOnline = async () => {
+      setOfflineStatus(prev => ({ ...prev, isOffline: false }));
+      toast.success('Back online! Syncing data...');
+      
+      try {
+        const syncResult = await workoutService.syncOfflineData();
+        if (syncResult.success && syncResult.message !== 'No data to sync') {
+          toast.success(syncResult.message);
+          // Reload workouts after sync
+          loadWorkouts();
+        }
+      } catch (err) {
+        toast.error('Failed to sync offline data');
+      }
+    };
+
+    const handleOffline = () => {
+      setOfflineStatus(prev => ({ ...prev, isOffline: true }));
+      toast.warning('You\'re now offline - workouts will be cached locally');
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
   }, []);
 
   const filteredWorkouts = selectedCategory === 'all' 
@@ -67,12 +113,12 @@ const WorkoutsPage = () => {
     );
   }
 
-  if (error) {
+  if (error && workouts.length === 0) {
     return (
       <div className="p-6">
         <FeedbackCard
-          type="error"
-          title="Failed to load workouts"
+          type={offlineStatus.isOffline ? "warning" : "error"}
+          title={offlineStatus.isOffline ? "Offline Mode" : "Failed to load workouts"}
           message={error}
           onAction={() => window.location.reload()}
           actionLabel="Try Again"
@@ -87,7 +133,7 @@ const WorkoutsPage = () => {
         <FeedbackCard
           type="empty"
           title="No workouts available"
-          message="Create your first workout to get started"
+          message={offlineStatus.isOffline ? "No cached workouts found" : "Create your first workout to get started"}
           iconName="Dumbbell"
           className="py-12"
         />
@@ -97,6 +143,23 @@ const WorkoutsPage = () => {
 
   return (
     <div className="max-w-full overflow-hidden">
+      {/* Offline Status Banner */}
+      {offlineStatus.isOffline && (
+        <div className="bg-warning/20 border-l-4 border-warning p-4 mx-6 mt-6 rounded">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <Text className="text-warning font-medium">Offline Mode</Text>
+            </div>
+            <div className="ml-3">
+              <Text className="text-sm text-warning">
+                You're offline. Workouts can still be completed and will sync when reconnected.
+                {offlineStatus.pendingSyncItems > 0 && ` (${offlineStatus.pendingSyncItems} items pending sync)`}
+              </Text>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="p-6 pb-0">
         <motion.div
@@ -131,7 +194,10 @@ const WorkoutsPage = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <WorkoutList workouts={filteredWorkouts} />
+          <WorkoutList 
+            workouts={filteredWorkouts} 
+            isOffline={offlineStatus.isOffline}
+          />
         </motion.div>
       </div>
     </div>
